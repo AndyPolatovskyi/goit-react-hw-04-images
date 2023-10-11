@@ -10,6 +10,11 @@ const body = document.querySelector('body');
 export default function Modal({ onToggle, img, tag }) {
 
     useEffect(() => {
+      const handleKeyDown = event => {
+        if (event.code === 'Escape') {
+          onToggle();
+        }
+      };
         window.addEventListener('keydown', handleKeyDown);
         body.classList.add('hidden-scroll');
   
@@ -19,11 +24,7 @@ export default function Modal({ onToggle, img, tag }) {
         };
       }, [onToggle]);
 
-     const handleKeyDown = event => {
-            if (event.code === 'Escape') {
-              onToggle();
-            }
-          };
+    
 
       const handleBackdropClick = event => {
     if (event.target === event.currentTarget) {

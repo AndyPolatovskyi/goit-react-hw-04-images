@@ -10,7 +10,6 @@ import { ImageGallery } from './ImageGallery/ImageGallery';
 import css from './App.module.css';
 import 'react-toastify/dist/ReactToastify.css';
 
-
 export function App() {
   const [value, setValue] = useState('');
   const [photos, setPhotos] = useState([]);
@@ -18,40 +17,36 @@ export function App() {
   const [handleButton, setHandleButton] = useState(false);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
-  const [download, setDownload] = useState(true);
 
   useEffect(() => {
-    if (download) {
-      setDownload(false);
+    if (value === '') {
       return;
     }
     setIsLoading(true);
     setHandleButton(false);
 
-    
     requestServer(value, page).then(({ hits, totalHits }) => {
-        if (page === 1) {
-          if (totalHits === 0) {
-            toast.warning('No photos found!');
-            setPhotos([...hits]);
-            setIsLoading(false);
-            setHandleButton(false);
-            
-            return;
-          }
+      if (page === 1) {
+        if (totalHits === 0) {
+          toast.warning('No photos found!');
           setPhotos([...hits]);
+          setIsLoading(false);
+          setHandleButton(false);
 
-          if (hits.length === totalHits) {
-            setIsLoading(false);
-            setHandleButton(false);
-            toast.info('Last page!');
-            
-          } else {
-            addTotalValue(totalHits);
-            setIsLoading(false);
-            setHandleButton(true);
-          }
           return;
+        }
+        setPhotos([...hits]);
+
+        if (hits.length === totalHits) {
+          setIsLoading(false);
+          setHandleButton(false);
+          toast.info('Last page!');
+        } else {
+          addTotalValue(totalHits);
+          setIsLoading(false);
+          setHandleButton(true);
+        }
+        return;
       }
       if (page !== 1) {
         setPhotos(state => [...state, ...hits]);
@@ -60,21 +55,20 @@ export function App() {
           toast.info('Last page!');
           setIsLoading(false);
           setHandleButton(false);
-          
         } else {
           setIsLoading(false);
           setHandleButton(true);
         }
       }
-      }); 
-  },[value, page]);
+    });
+  }, [value, page, total]);
 
   function addTotalValue(value) {
     const result = Math.round(value / 12);
     setTotal(result);
     return;
   }
-  
+
   const handleFormSubmit = event => {
     const value = event.trim();
     if (value !== '') {
@@ -82,14 +76,11 @@ export function App() {
       setPage(1);
     }
   };
-  const loadingNextPhotos  = () => {
+  const loadingNextPhotos = () => {
     setPage(prevState => prevState + 1);
   };
 
-
-
   return (
-    
     <div className={css.container}>
       <Searchbar onSubmit={handleFormSubmit} />
       <ImageGallery images={photos} />
@@ -98,21 +89,7 @@ export function App() {
       <ToastContainer position="top-center" autoClose={3000} />
     </div>
   );
-
-
-
-
-
-
-
 }
-
-
-
-
-
-
-
 
 // export class App extends Component {
 //   state = {
